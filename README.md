@@ -80,6 +80,9 @@ docker run -d \
 portainer/portainer
 ```
 
+![img/portainer.png](img/portainer.png)
+
+
 ### Escrevendo o `docker-compose.yml`
 
 ```yml
