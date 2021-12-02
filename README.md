@@ -129,9 +129,77 @@ networks:
   postgres:
 ```
 
+## Criando o projeto
+
+### Instalando o Django
+
+```
+python -m venv .venv
+source .venv/bin/activate
+
+pip install django python-decouple django-extensions
+pip freeze | grep Django >> requirements.txt
+pip freeze | grep python-decouple >> requirements.txt
+pip freeze | grep django-extensions >> requirements.txt
+cat requirements.txt
+```
+
+### Criando o projeto
+
+```
+django-admin startproject backend .
+```
+
+### Definindo as variáveis de ambiente
+
+```
+cat << EOF > .env
+SECRET_KEY=my-super-secret-key
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1,.localhost,0.0.0.0
+POSTGRES_DB=db
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+DB_HOST=localhost
+EOF
+
+cat .env
+```
+
+### Criando a app
+
+```
+python manage.py startapp core
+
+mv core/ backend/
+```
+
+### Edite core/apps.py
+
+```python
+name = 'backend.core'
+```
+
+
 ### Editando `settings.py`
 
 ```python
+from decouple import Csv, config
+
+SECRET_KEY = config('SECRET_KEY')
+
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
+
+INSTALLED_APPS = [
+    ...
+    # 3rd apps
+    'django_extensions',
+    # my apps
+    'backend.core',
+]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -143,6 +211,13 @@ DATABASES = {
         'PORT': '5433',
     }
 }
+
+LANGUAGE_CODE = 'pt-br'
+
+TIME_ZONE = 'America/Sao_Paulo'
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR.joinpath('staticfiles')
 ```
 
 ### Rodando os containers
@@ -166,6 +241,13 @@ pip freeze | grep psycopg2-binary >> requirements.txt
 python manage.py migrate
 ```
 
+### Criando um super usuário
+
+```
+python manage.py createsuperuser --username="admin" --email=""
+python manage.py createsuperuser --username="regis" --email="regis@email.com"
+```
+
 ### Entrando no container do banco pra conferir os dados
 
 ```
@@ -177,8 +259,6 @@ docker container exec -it db psql
 \dt
 
 SELECT username, email FROM auth_user;
-
-SELECT * FROM travel_travel;
 
 # CREATE DATABASE db;
 # CREATE DATABASE db OWNER postgres;
@@ -198,4 +278,14 @@ Você também pode ver tudo pelo Portainer.
 ```
 python manage.py runserver
 ```
+
+## pgAdmin
+
+Entre no pgAdmin.
+
+![img/db01.png](img/db01.png)
+
+![img/db02.png](img/db02.png)
+
+![img/pgadmin.png](img/pgadmin.png)
 
