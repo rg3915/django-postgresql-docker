@@ -252,6 +252,8 @@ python manage.py createsuperuser --username="regis" --email="regis@email.com"
 
 ```
 docker container exec -it db psql
+# ou
+docker container exec -it db psql -h localhost -U postgres db
 ```
 
 ```
