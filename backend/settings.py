@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 3rd apps
     'django_extensions',
+    'django_seed',
     # my apps
     'backend.core',
 ]
